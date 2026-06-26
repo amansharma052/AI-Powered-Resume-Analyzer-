@@ -2,6 +2,7 @@ import userModel from "../models/user.model.js"
 import bcrypt, { compare } from "bcryptjs"
 
 import config from "../config/config.js"
+import tokenBlackListModel from "../models/token.model.js"
 import  jwt from "jsonwebtoken"
 
 export async function register(req,res){
@@ -82,7 +83,22 @@ export async function login(req,res){
         }
     })
 
+
+
     
 
 }
-export default {register,login}
+
+export async function logout(req,res){
+    const token =req.cookies.token
+
+    if(token){
+        await tokenBlackListModel.create({token})
+    }
+    res.clearCookie("token")
+
+    res.status(200).json({
+        message:"user logout successfully"
+    })
+}
+export default {register,login,logout}
