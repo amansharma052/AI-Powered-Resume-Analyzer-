@@ -46,15 +46,12 @@ export async function register(req,res){
 }
 
 export async function login(req,res){
-    const{username,email,password}=req.body
+    const{email,password}=req.body
 
-    const user =await userModel.findOne({
-        $or:[{username},{email}]
-
-    })
+    const user =await userModel.findOne({email})
     if(!user){
         return res.status(400).json({
-            message:"user not found by username or email"
+            message:"user not found by  email"
         })
     }
 
@@ -78,7 +75,6 @@ export async function login(req,res){
         message: "User login successfully",
         user: {
             id: user._id,
-            username: user.username,
             email: user.email
         }
     })
