@@ -1,22 +1,30 @@
-import { useContext, useEffect } from "react";
-import { AuthContext } from "../auth.api";
-import { login, register, logout, getMe } from "../services/auth.api";
+import { useContext, useEffect } from "react"
+import { AuthContext } from "../auth.context"
+import { login, register, logout, getMe } from "../services/auth.service"
 
-
-
+/**
+ * Layer 3 — useAuth Hook
+ * Consumes AuthContext and calls the service layer.
+ * Pages use this hook — they never touch the API or service directly.
+ */
 export const useAuth = () => {
 
     const context = useContext(AuthContext)
-    const { user, setUser, loading, setLoading } = context
 
+    if (!context) {
+        throw new Error("useAuth must be used within an AuthProvider")
+    }
+
+    const { user, setUser, loading, setLoading } = context
 
     const handleLogin = async ({ email, password }) => {
         setLoading(true)
         try {
-            const data = await login({ email, password })
-            setUser(data.user)
+            const user = await login({ email, password })
+            setUser(user)
         } catch (err) {
-
+            console.error("Login failed:", err)
+            throw err
         } finally {
             setLoading(false)
         }
@@ -25,10 +33,11 @@ export const useAuth = () => {
     const handleRegister = async ({ username, email, password }) => {
         setLoading(true)
         try {
-            const data = await register({ username, email, password })
-            setUser(data.user)
+            const user = await register({ username, email, password })
+            setUser(user)
         } catch (err) {
-
+            console.error("Register failed:", err)
+            throw err
         } finally {
             setLoading(false)
         }
@@ -37,29 +46,27 @@ export const useAuth = () => {
     const handleLogout = async () => {
         setLoading(true)
         try {
-            const data = await logout()
+            await logout()
             setUser(null)
         } catch (err) {
-
+            console.error("Logout failed:", err)
         } finally {
             setLoading(false)
         }
     }
 
+    // Restore session on mount
     useEffect(() => {
-
-        const getAndSetUser = async () => {
+        const restoreSession = async () => {
+            setLoading(true)
             try {
-
-                const data = await getMe()
-                setUser(data.user)
-            } catch (err) { } finally {
+                const user = await getMe()
+                setUser(user)
+            } finally {
                 setLoading(false)
             }
         }
-
-        getAndSetUser()
-
+        restoreSession()
     }, [])
 
     return { user, loading, handleRegister, handleLogin, handleLogout }

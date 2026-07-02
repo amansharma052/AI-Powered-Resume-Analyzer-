@@ -2,13 +2,16 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import App from './App.jsx'
-import { AuthProvider } from './features/auth/auth.api.jsx'
+import { AuthProvider } from './features/auth/auth.context'
+import { InterviewProvider } from './features/interview/interview.context'
 import "./style.scss"
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-      <App />
+      <InterviewProvider>
+        <App />
+      </InterviewProvider>
     </AuthProvider>
   </StrictMode>,
 )

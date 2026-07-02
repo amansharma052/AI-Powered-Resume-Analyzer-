@@ -1,15 +1,24 @@
-import {createBrowserRouter} from "react-router"
+import { createBrowserRouter } from "react-router"
 import Login from "./features/auth/pages/Login"
 import Register from "./features/auth/pages/Register"
+import Home from "./features/interview/pages/Home"
+import Interview from "./features/interview/pages/Interview"
 
-
-export const router=createBrowserRouter([
+export const router = createBrowserRouter([
     {
-        path:"/login",
-        element:<Login/>
+        path: "/",
+        element: <Home />
     },
     {
-        path:"/register",
-        element:<Register/>
+        path: "/interview/:interviewId",
+        element: <Interview />
+    },
+    {
+        path: "/login",
+        element: <Login />
+    },
+    {
+        path: "/register",
+        element: <Register />
     }
 ])
